@@ -7,6 +7,7 @@ import numpy as np
 import sounddevice as sd
 import uuid
 from scipy.io.wavfile import write as write_wav
+from llama_cpp import Llama 
 from bark import generate_audio, SAMPLE_RATE  # Assuming you have Bark installed
 from weaviate import Client
 
@@ -63,13 +64,15 @@ def send_message_to_llama(message):
 async def initialize_db():
     # Load phones from JSON into Weaviate
     with open("phones.json", "r") as f:
-        phones = json.load(f)
+        data = json.load(f)
+        phones = data['phones']  # Access the 'phones' key to get the list of phones
     for phone in phones:
-        client.data_object.create({
-            "name": phone["name"],
-            "description": phone["description"],
-            "price": phone["price"]
-        }, "Phone")
+        if isinstance(phone, dict):
+            client.data_object.create({
+                "name": phone.get("name", ""),
+                "description": phone.get("retailPrice", ""),
+                "price": phone.get("monthlyPrice", "")
+            }, "Phone")
 
 # Main function
 async def main():
