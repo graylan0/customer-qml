@@ -29,7 +29,6 @@ pip install weaviate-client
 pip install git+https://github.com/suno-ai/bark
 
 # Install Llama2 Library
-
 pip install llama-cpp-python==0.1.78
 ```
 
