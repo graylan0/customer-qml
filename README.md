@@ -6,3 +6,60 @@
 
 
 ![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/ec335796-24fd-4ac2-9799-b4443d0d37c8)
+
+
+# Demo Template Install
+
+Certainly, here's an improved installation guide with better Markdown formatting for setting up the Verizon Service Sales Representative AI Ambassador application:
+
+---
+
+## Installation Guide
+
+### Prerequisites
+
+1. **Python**: Make sure Python is installed on your system.
+2. **Docker Desktop**: Download and install from the [official website](https://www.docker.com/products/docker-desktop).
+
+### Step-by-Step Instructions
+
+#### Install Required Python Packages
+
+```bash
+# Install Eel for GUI
+pip install eel
+
+# Install Weaviate Client
+pip install weaviate-client
+
+# Install Bark for additional functionalities
+pip install git+https://github.com/suno-ai/bark
+```
+
+#### Set Up Weaviate Vector Database
+
+```bash
+# Pull and run Weaviate Docker image
+docker run -d --name weaviate -p 8080:8080 weaviate/weaviate
+```
+
+#### Clone Project Repository
+
+```bash
+# Clone the repository containing index.html and app.py
+git clone https://github.com/graylan0/verizon-qml-customer-service
+```
+
+#### Run the Application
+
+```bash
+# Navigate to the project directory
+cd verizon-qml-customer-service
+
+# Run the Python backend
+python app.py
+```
+
+---
+
+After following these steps, the Python backend should launch, and Eel will display the frontend GUI. The application will also connect to the Weaviate vector database running in the Docker container.
