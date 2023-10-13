@@ -58,4 +58,6 @@ python app.py
 
 ---
 
+this is how it should look when vectordb load ![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/cb14e3a5-870d-4d59-8071-973ac98d0af9)
+
 After following these steps, the Python backend should launch, and Eel will display the frontend GUI. The application will also connect to the Weaviate vector database running in the Docker container.
