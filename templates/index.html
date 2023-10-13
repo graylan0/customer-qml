@@ -84,12 +84,12 @@
         <div id="chat-box">
             <!-- Chat messages will go here -->
         </div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="send-button">Send</button>
         <div id="phone-recommendations">
             <!-- Phone recommendations will go here -->
         </div>
     </div> <!-- End of main-content -->
-
-    <!-- Footer -->
     <div style="background-color: #333; color: white; padding: 20px; text-align: center; position: fixed; bottom: 0; width: 100%;">
         <p>🤖 Built by AI models including LLama2/ChatGPT Intercommunication 🤖</p>
         <p>👨‍💻 Human Trainer/Engineer: gray00/Graylan 👨‍💻</p>
@@ -98,6 +98,15 @@
 
     <script type="text/javascript" src="/eel.js"></script>
     <script type="text/javascript">
+        document.getElementById('send-button').addEventListener('click', async () => {
+            const userInput = document.getElementById('user-input').value;
+            const response = await eel.send_message_to_llama(userInput)();
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<p>User: ${userInput}</p>`;
+            chatBox.innerHTML += `<p>AI: ${response}</p>`;
+            document.getElementById('user-input').value = '';
+        });
+
         async function fetchPhoneRecommendations() {
             const response = await fetch('/getPhoneRecommendations');
             const data = await response.json();
@@ -117,3 +126,4 @@
     </script>
 </body>
 </html>
+
