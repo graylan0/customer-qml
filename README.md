@@ -7,13 +7,6 @@
 
 ![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/ec335796-24fd-4ac2-9799-b4443d0d37c8)
 
-
-# Demo Template Install
-
-Certainly, here's an improved installation guide with better Markdown formatting for setting up the Verizon Service Sales Representative AI Ambassador application:
-
----
-
 ## Installation Guide
 
 ### Prerequisites
