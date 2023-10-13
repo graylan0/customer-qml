@@ -11,7 +11,7 @@
 
 ### Prerequisites
 
-1. **Python**: Make sure Python is installed on your system.
+1. **Python**: Make sure Python 3.9 + is installed on your system. [official website](https://www.python.org/downloads/release/python-31013/)
 2. **Docker Desktop**: Download and install from the [official website](https://www.docker.com/products/docker-desktop).
 
 ### Step-by-Step Instructions
