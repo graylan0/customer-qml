@@ -2,10 +2,17 @@
 
 # Non offical repo by a single open source/freedom software engineer looking to make a change. Build better corporations and better customers as well. 
 =
+
+# Demo GUI 1: With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS 
+
+![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/d95d4383-1444-4446-aeea-f6407b143d9f)
+
 ![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/29b4f487-d0b5-4ba5-a7b0-728485465f62)
 
 
 ![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/ec335796-24fd-4ac2-9799-b4443d0d37c8)
+
+
 
 ## Installation Guide
 
