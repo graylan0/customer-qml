@@ -43,7 +43,7 @@ async def initialize_db():
                 {'name': 'description', 'dataType': ['text']},
                 {'name': 'price', 'dataType': ['int']}
             ],
-            'vectorizer': 'text2vec'  # Specify the text2vec vectorizer
+            'vectorizer': 'text2vec-contextionary'  # Specify the text2vec vectorizer
         }
 
         # Create the Phone class in Weaviate
@@ -55,10 +55,6 @@ async def initialize_db():
             return
     except Exception as e:
         logging.error(f"An error occurred while checking Weaviate: {e}")
-
-    logging.info("Initializing Weaviate database with phone data.")
-    await populate_weaviate_with_phones()
-
 
     logging.info("Initializing Weaviate database with phone data.")
     await populate_weaviate_with_phones()
@@ -89,10 +85,6 @@ async def query_weaviate_for_phones(keywords):
     except Exception as e:
         logging.error(f"An error occurred while querying Weaviate: {e}")
         return []
-
-
-
-
 
 
 # Function to populate Weaviate with phone data and generate vectors
@@ -181,9 +173,22 @@ async def run_llm(prompt):
 
     return response
 
-# BarkTTS function
+# Function to generate audio for each sentence and add pauses
 def generate_audio_for_sentence(sentence):
     audio = generate_audio(sentence, history_prompt="v2/en_speaker_6")
+    silence = np.zeros(int(0.75 * SAMPLE_RATE))  # quarter second of silence
+    return np.concatenate([audio, silence])
+
+# Function to generate and play audio for a message
+def generate_and_play_audio(message):
+    sentences = re.split('(?<=[.!?]) +', message)
+    audio_arrays = []
+    
+    for sentence in sentences:
+        audio_arrays.append(generate_audio_for_sentence(sentence))
+        
+    audio = np.concatenate(audio_arrays)
+    
     file_name = str(uuid.uuid4()) + ".wav"
     write_wav(file_name, SAMPLE_RATE, audio)
     sd.play(audio, samplerate=SAMPLE_RATE)
@@ -193,7 +198,7 @@ def generate_audio_for_sentence(sentence):
 @eel.expose
 def send_message_to_llama(message):
     response = asyncio.run(run_llm(message))
-    generate_audio_for_sentence(response)
+    generate_and_play_audio(response)  # Changed this line to use the new function
     return response
 
 # Main function
