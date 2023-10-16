@@ -12,7 +12,6 @@ from scipy.io.wavfile import write as write_wav
 from llama_cpp import Llama
 from bark import generate_audio, SAMPLE_RATE  # Assuming you have Bark installed
 from weaviate import Client
-
 # Initialize EEL with the web folder
 eel.init('web')
 
@@ -31,33 +30,6 @@ llm = Llama(
 
 # Initialize ThreadPoolExecutor
 executor = ThreadPoolExecutor(max_workers=3)
-
-# Initialize the database
-async def initialize_db():
-    try:
-        # Define the schema for the Phone class with the text2vec vectorizer
-        phone_class_obj = {
-            'class': 'Phone',
-            'properties': [
-                {'name': 'name', 'dataType': ['text']},
-                {'name': 'description', 'dataType': ['text']},
-                {'name': 'price', 'dataType': ['int']}
-            ],
-            'vectorizer': 'text2vec-contextionary'  # Specify the text2vec vectorizer
-        }
-
-        # Create the Phone class in Weaviate
-        client.schema.create_class(phone_class_obj)
-
-        response = client.query.get("Phone", ["name"]).with_limit(1).do()
-        if 'data' in response and response['data'].get('Get', {}).get('Phone'):
-            logging.info("Data already exists in Weaviate. Skipping initialization.")
-            return
-    except Exception as e:
-        logging.error(f"An error occurred while checking Weaviate: {e}")
-
-    logging.info("Initializing Weaviate database with phone data.")
-    await populate_weaviate_with_phones()
 
 async def query_weaviate_for_phones(keywords):
     try:
@@ -85,30 +57,6 @@ async def query_weaviate_for_phones(keywords):
     except Exception as e:
         logging.error(f"An error occurred while querying Weaviate: {e}")
         return []
-
-
-# Function to populate Weaviate with phone data and generate vectors
-async def populate_weaviate_with_phones():
-    try:
-        with open("phones.json", "r") as f:
-            data = json.load(f)
-            phones = data['phones']
-        
-        for phone in phones:
-            description = phone.get("description", "")
-            vector = client.modules.text2vec.generate_vector(description)
-            
-            client.data_object.create({
-                "class": "Phone",
-                "properties": {
-                    "name": phone.get("name", ""),
-                    "description": description,
-                    "price": phone.get("price", ""),
-                    "vector": vector
-                }
-            })
-    except Exception as e:
-        logging.error(f"An error occurred while populating Weaviate: {e}")
 
 # Function to extract keywords using summarization technique
 async def extract_keywords_with_summarization(prompt):
@@ -173,22 +121,9 @@ async def run_llm(prompt):
 
     return response
 
-# Function to generate audio for each sentence and add pauses
+# BarkTTS function
 def generate_audio_for_sentence(sentence):
     audio = generate_audio(sentence, history_prompt="v2/en_speaker_6")
-    silence = np.zeros(int(0.75 * SAMPLE_RATE))  # quarter second of silence
-    return np.concatenate([audio, silence])
-
-# Function to generate and play audio for a message
-def generate_and_play_audio(message):
-    sentences = re.split('(?<=[.!?]) +', message)
-    audio_arrays = []
-    
-    for sentence in sentences:
-        audio_arrays.append(generate_audio_for_sentence(sentence))
-        
-    audio = np.concatenate(audio_arrays)
-    
     file_name = str(uuid.uuid4()) + ".wav"
     write_wav(file_name, SAMPLE_RATE, audio)
     sd.play(audio, samplerate=SAMPLE_RATE)
@@ -198,17 +133,12 @@ def generate_and_play_audio(message):
 @eel.expose
 def send_message_to_llama(message):
     response = asyncio.run(run_llm(message))
-    generate_and_play_audio(response)  # Changed this line to use the new function
+    generate_audio_for_sentence(response)
     return response
 
-# Main function
-async def main():
-    await initialize_db()
 
 # Entry point of the script
 if __name__ == "__main__":
     import nest_asyncio
     nest_asyncio.apply()
-    asyncio.run(main())
     eel.start('index.html')
-
