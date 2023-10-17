@@ -1,5 +1,4 @@
 import eel
-import json
 import asyncio
 import re
 import speech_recognition as sr
@@ -7,8 +6,10 @@ import time
 import collections
 import threading
 import logging
+from textblob import TextBlob
+from pennylane import numpy as np
+import pennylane as qml
 from concurrent.futures import ThreadPoolExecutor
-import numpy as np
 import sounddevice as sd
 import uuid
 from scipy.io.wavfile import write as write_wav
@@ -30,6 +31,9 @@ llm = Llama(
     n_gpu_layers=-1,
     n_ctx=3900,
 )
+
+# Initialize a quantum device
+dev = qml.device("default.qubit", wires=4)
 
 # Initialize ThreadPoolExecutor
 executor = ThreadPoolExecutor(max_workers=3)
@@ -96,7 +100,25 @@ async def query_weaviate_for_phones(keywords):
     except Exception as e:
         logging.error(f"An error occurred while querying Weaviate: {e}")
         return []
-    
+
+async def update_weaviate_with_quantum_state(quantum_state):
+    try:
+        # Assume 'CustomerSupport' is the class name in Weaviate schema
+        # Generate a unique ID for each quantum state; you can use any other method to generate a unique ID
+        unique_id = str(uuid.uuid4())
+        client.data_object.create(
+            {
+                "class": "CustomerSupport",
+                "id": unique_id,
+                "properties": {
+                    "quantumState": list(quantum_state)  # Convert numpy array to list
+                }
+            }
+        )
+    except Exception as e:
+        logging.error(f"An error occurred while updating Weaviate: {e}")
+
+
 def audio_to_text(audio_data):
     try:
         text = recognizer.recognize_google(audio_data)
@@ -133,13 +155,61 @@ async def extract_keywords_with_summarization(prompt):
     print("Extracted keywords:", keywords)
     
     return keywords
-        
-# Function to run Llama model and query Weaviate for phone recommendations
-async def run_llm(prompt):
-    # Check if the prompt is an AudioData object and convert it to text if needed
-    if isinstance(prompt, sr.AudioData):
-        prompt = audio_to_text(prompt)  # Assuming audio_to_text is a function that converts AudioData to text
 
+async def summarize_to_color_code(prompt):
+    # Use TextBlob to analyze the sentiment of the prompt for amplitude
+    analysis = TextBlob(prompt)
+    sentiment_score = analysis.sentiment.polarity
+
+    # Normalize the sentiment score to an amplitude between 0 and 1
+    amplitude = (sentiment_score + 1) / 2
+
+    # Initialize color_code to None
+    color_code = None
+
+    # Loop to keep trying until a valid color code is found
+    while color_code is None:
+        color_prompt = "Generate a single map to emotion html color code based upon the following text;" + prompt
+        color_response = llm(color_prompt, max_tokens=350)['choices'][0]['text'].strip()
+        # Print the Llama model's reply to the console
+        print("Llama model's reply:", color_response)
+        # Use advanced regex to find a color code in the Llama2 response
+        match = re.search(r'#[0-9a-fA-F]{6}', color_response)
+        if match:
+            color_code = match.group(0)
+        else:
+            print("Retrying to get a valid color code...")
+
+    return color_code, amplitude        
+
+async def run_llm(prompt):
+    # Summarize the user's reply into a color code and amplitude
+    color_code, amplitude = await summarize_to_color_code(prompt)
+
+    # Generate quantum state based on the color code and amplitude
+    quantum_state = quantum_circuit(color_code, amplitude).numpy()
+    
+    # Update the GUI with the quantum state before generating Llama model's reply
+    eel.update_chat_box(f"Quantum State based on User's Reply: {quantum_state}")
+
+    # Check if the user's prompt is related to phone recommendations
+    if 'phone' in prompt.lower():
+        # Extract keywords dynamically from the user's prompt
+        keywords = await extract_keywords_with_summarization(prompt)
+        
+        # Query Weaviate for phone recommendations based on the extracted keywords
+        recommended_phones = await query_weaviate_for_phones(keywords)
+        
+        # Prepare the phone recommendations for inclusion in the Llama model prompt
+        phone_recommendations = ""
+        if recommended_phones:
+            for phone in recommended_phones:
+                phone_recommendations += f"\n- {phone['name']}: {phone['description']} (Price: {phone['price']})"
+        
+        query_prompt = f"A customer is looking for a phone and said: '{prompt}'. What are the best 2 phones you recommend and why? Here are some options based on your criteria:{phone_recommendations}"
+    else:
+        query_prompt = f"Please analyze the user's input as {quantum_state}. This is the amplitude: {amplitude}. Provide insights into understanding the customer's dynamic emotional condition."
+    
     agi_prompt = ("You are a Verizon Service Sales Representative AI Ambassador. "
                   "Your job is critical. You are responsible for helping customers, "
                   "especially those who are elderly or not tech-savvy, with their needs. "
@@ -149,31 +219,14 @@ async def run_llm(prompt):
                   "3. Ensuring customer satisfaction.\n"
                   "4. Offering interactive engagement to keep customers entertained while they wait.\n")
     
-    # Extract keywords dynamically from the user's prompt using Llama2
-    keywords = await extract_keywords_with_summarization(prompt)
-    
-    # Query Weaviate for phone recommendations based on the extracted keywords
-    recommended_phones = await query_weaviate_for_phones(keywords)
-    
-    # Prepare the phone recommendations for inclusion in the Llama model prompt
-    phone_recommendations = ""
-    if recommended_phones:
-        for phone in recommended_phones:
-            phone_recommendations += f"\n- {phone['name']}: {phone['description']} (Price: {phone['price']})"
-    
-    query_prompt = f"A customer is looking for a phone and said: '{prompt}'. What are the best 2 phones you recommend and why? Here are some options based on your criteria:{phone_recommendations}"
-    
     full_prompt = agi_prompt + query_prompt
     
     # Generate the response using the Llama model
     response = llm(full_prompt, max_tokens=900)['choices'][0]['text']
     
-    # Print the Llama model's reply to the console
-    print("Llama model's reply:", response)
-
     # Update the GUI with the Llama model's reply
     eel.update_chat_box(f"AI: {response}")
-
+    await update_weaviate_with_quantum_state(quantum_state)
     # Convert the Llama model's reply to speech
     generate_and_play_audio(response)
 
@@ -198,10 +251,28 @@ def generate_and_play_audio(message):
     sd.play(audio, samplerate=SAMPLE_RATE)
     sd.wait()
 
+def sentiment_to_amplitude(text):
+    analysis = TextBlob(text)
+    return (analysis.sentiment.polarity + 1) / 2
+
+@qml.qnode(dev)
+def quantum_circuit(color_code, amplitude):
+    r, g, b = [int(color_code[i:i+2], 16) for i in (1, 3, 5)]
+    r, g, b = r / 255.0, g / 255.0, b / 255.0
+    qml.RY(r * np.pi, wires=0)
+    qml.RY(g * np.pi, wires=1)
+    qml.RY(b * np.pi, wires=2)
+    qml.RY(amplitude * np.pi, wires=3)
+    qml.CNOT(wires=[0, 1])
+    qml.CNOT(wires=[1, 2])
+    qml.CNOT(wires=[2, 3])
+    return qml.state()
+
 # EEL function to send message to Llama and get a response
 @eel.expose
 def send_message_to_llama(message):
-    response = asyncio.run(run_llm(message))
+    loop = asyncio.get_event_loop()
+    response = loop.run_until_complete(run_llm(message))
     generate_and_play_audio(response)  # Changed this line to use the new function
     return response
 
