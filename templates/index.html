@@ -81,6 +81,8 @@
             <i class="fas fa-cog"></i> Settings
         </div>
         <h1>Chat with Verizon AI Ambassador</h1>
+        <button id="toggle-speech-recognition">Enable Speech Recognition</button>
+        <div id="recognized-speech"></div>
         <div id="chat-box">
             <!-- Chat messages will go here -->
         </div>
@@ -98,12 +100,19 @@
 
     <script type="text/javascript" src="/eel.js"></script>
     <script type="text/javascript">
+        let isSpeechRecognitionEnabled = false;
+
+        document.getElementById('toggle-speech-recognition').addEventListener('click', () => {
+            isSpeechRecognitionEnabled = !isSpeechRecognitionEnabled;
+            eel.set_speech_recognition_state(isSpeechRecognitionEnabled);
+            document.getElementById('toggle-speech-recognition').innerText = isSpeechRecognitionEnabled ? 'Disable Speech Recognition' : 'Enable Speech Recognition';
+        });
+
         document.getElementById('send-button').addEventListener('click', async () => {
             const userInput = document.getElementById('user-input').value;
             const response = await eel.send_message_to_llama(userInput)();
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML += `<p>User: ${userInput}</p>`;
-            chatBox.innerHTML += `<p>AI: ${response}</p>`;
+            update_chat_box(`User: ${userInput}`);
+            update_chat_box(`AI: ${response}`);
             document.getElementById('user-input').value = '';
         });
 
@@ -123,7 +132,15 @@
         }
 
         fetchPhoneRecommendations();
+
+        // Function to update the chat box
+        eel.expose(update_chat_box);
+        function update_chat_box(message) {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<p>${message}</p>`;
+        }
     </script>
 </body>
 </html>
+
 
