@@ -66,7 +66,9 @@ def continuous_speech_recognition():
                 time.sleep(1)
 
 # Start the continuous speech recognition in a separate thread
-threading.Thread(target=continuous_speech_recognition).start()
+thread = threading.Thread(target=continuous_speech_recognition)
+thread.daemon = True  # Set daemon to True
+thread.start()
 
 async def query_weaviate_for_phones(keywords):
     try:
@@ -169,7 +171,11 @@ async def run_llm(prompt):
     # Print the Llama model's reply to the console
     print("Llama model's reply:", response)
 
-    return response
+    # Update the GUI with the Llama model's reply
+    eel.update_chat_box(f"AI: {response}")
+
+    # Convert the Llama model's reply to speech
+    generate_and_play_audio(response)
 
 # Function to generate audio for each sentence and add pauses
 def generate_audio_for_sentence(sentence):
@@ -202,6 +208,11 @@ def send_message_to_llama(message):
 
 # Entry point of the script
 if __name__ == "__main__":
-    import nest_asyncio
-    nest_asyncio.apply()
-    eel.start('index.html')
+    try:
+        import nest_asyncio
+        nest_asyncio.apply()
+        eel.start('index.html')
+    except KeyboardInterrupt:
+        print("Exiting program...")
+        # Perform any necessary cleanup here
+        exit(0)
