@@ -2,7 +2,10 @@ import eel
 import json
 import asyncio
 import re
+import speech_recognition as sr
+import time
 import collections
+import threading
 import logging
 from concurrent.futures import ThreadPoolExecutor
 import numpy as np
@@ -31,6 +34,40 @@ llm = Llama(
 # Initialize ThreadPoolExecutor
 executor = ThreadPoolExecutor(max_workers=3)
 
+# Initialize variables for speech recognition
+is_listening = False
+recognizer = sr.Recognizer()
+mic = sr.Microphone()
+
+# Function to start/stop speech recognition
+@eel.expose
+def set_speech_recognition_state(state):
+    global is_listening
+    is_listening = state
+
+# Function to run continuous speech recognition
+def continuous_speech_recognition():
+    global is_listening
+    with mic as source:
+        recognizer.adjust_for_ambient_noise(source)
+        while True:
+            if is_listening:
+                try:
+                    audio_data = recognizer.listen(source, timeout=1)
+                    text = audio_to_text(audio_data)  # Convert audio to text
+                    if text not in ["Could not understand audio", ""]:
+                        asyncio.run(run_llm(text))
+                        eel.update_chat_box(f"User: {text}")
+                except sr.WaitTimeoutError:
+                    continue
+                except Exception as e:
+                    eel.update_chat_box(f"An error occurred: {e}")
+            else:
+                time.sleep(1)
+
+# Start the continuous speech recognition in a separate thread
+threading.Thread(target=continuous_speech_recognition).start()
+
 async def query_weaviate_for_phones(keywords):
     try:
         query = {
@@ -57,7 +94,16 @@ async def query_weaviate_for_phones(keywords):
     except Exception as e:
         logging.error(f"An error occurred while querying Weaviate: {e}")
         return []
-
+    
+def audio_to_text(audio_data):
+    try:
+        text = recognizer.recognize_google(audio_data)
+        return text
+    except sr.UnknownValueError:
+        return "Could not understand audio"
+    except sr.RequestError as e:
+        return f"Could not request results; {e}"
+    
 # Function to extract keywords using summarization technique
 async def extract_keywords_with_summarization(prompt):
     # Tokenize the text into individual words
@@ -88,6 +134,10 @@ async def extract_keywords_with_summarization(prompt):
         
 # Function to run Llama model and query Weaviate for phone recommendations
 async def run_llm(prompt):
+    # Check if the prompt is an AudioData object and convert it to text if needed
+    if isinstance(prompt, sr.AudioData):
+        prompt = audio_to_text(prompt)  # Assuming audio_to_text is a function that converts AudioData to text
+
     agi_prompt = ("You are a Verizon Service Sales Representative AI Ambassador. "
                   "Your job is critical. You are responsible for helping customers, "
                   "especially those who are elderly or not tech-savvy, with their needs. "
@@ -121,9 +171,22 @@ async def run_llm(prompt):
 
     return response
 
-# BarkTTS function
+# Function to generate audio for each sentence and add pauses
 def generate_audio_for_sentence(sentence):
     audio = generate_audio(sentence, history_prompt="v2/en_speaker_6")
+    silence = np.zeros(int(0.75 * SAMPLE_RATE))  # quarter second of silence
+    return np.concatenate([audio, silence])
+
+# Function to generate and play audio for a message
+def generate_and_play_audio(message):
+    sentences = re.split('(?<=[.!?]) +', message)
+    audio_arrays = []
+    
+    for sentence in sentences:
+        audio_arrays.append(generate_audio_for_sentence(sentence))
+        
+    audio = np.concatenate(audio_arrays)
+    
     file_name = str(uuid.uuid4()) + ".wav"
     write_wav(file_name, SAMPLE_RATE, audio)
     sd.play(audio, samplerate=SAMPLE_RATE)
@@ -133,7 +196,7 @@ def generate_audio_for_sentence(sentence):
 @eel.expose
 def send_message_to_llama(message):
     response = asyncio.run(run_llm(message))
-    generate_audio_for_sentence(response)
+    generate_and_play_audio(response)  # Changed this line to use the new function
     return response
 
 
