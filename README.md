@@ -3,7 +3,7 @@
 # Non offical repo by a single open source/freedom software engineer looking to make a change. Build better corporations and better customers as well. 
 =
 
-# Demo GUI 1: With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Colorized Amplitude Quantum Language Model 
+# Demo GUI 1: With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Colorized Amplitude Quantum Language Model  + Google Speech API Enabled Voice to Text Using Speech Reconigition 
 QUANTUM DEMO:
 
 ![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/5b16000e-9a4c-4d6b-9123-ec6b50ed34c1)
