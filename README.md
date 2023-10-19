@@ -46,7 +46,7 @@ pip install llama-cpp-python==0.1.78
 
 ```bash
 # Pull and run Weaviate Docker image
-docker run -d --name weaviate -p 8080:8080 weaviate/weaviate
+use the docker-compose.yml located in the repo. (better docs coming) 
 ```
 
 #### Clone Project Repository
