@@ -47,6 +47,9 @@ pip install SpeechRecognition
 # Install Pennylane Library
 pip install pennylane
 
+# Install Textblob
+pip install textblob
+
 ```
 
 #### Set Up Weaviate Vector Database
