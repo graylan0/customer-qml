@@ -75,7 +75,7 @@ git clone https://github.com/graylan0/verizon-qml-customer-service
 
 ```bash
 # Navigate to the project directory
-cd verizon-qml-customer-service
+cd customer-qml
 
 # Run the Python backend
 python app.py
