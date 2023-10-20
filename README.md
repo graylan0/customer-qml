@@ -51,6 +51,10 @@ pip install pennylane
 # Install Textblob
 pip install textblob
 
+# Install SciPy
+pip install SciPy
+
+
 ```
 
 #### Set Up Weaviate Vector Database
