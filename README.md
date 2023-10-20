@@ -2,7 +2,7 @@
 
 With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Colorized Amplitude Quantum Language Model  + Google Speech API Enabled Voice to Text Using Speech Reconigition 
 
-Created by a single open source/freedom software enginee invoking #codenameorca software repoistory cooperation to build better corporations and better customers as well. 
+Created by a single open source/freedom software enginee invoking #codenameorca software repository cooperation to build better corporations and better customers as well. 
 
 
 QUANTUM DEMO:
