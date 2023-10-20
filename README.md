@@ -1,4 +1,4 @@
-# verizon-qml-customer-service Non Official Customer Developer
+qml-customer-service
 
 With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Colorized Amplitude Quantum Language Model  + Google Speech API Enabled Voice to Text Using Speech Reconigition 
 
