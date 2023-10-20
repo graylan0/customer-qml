@@ -40,6 +40,13 @@ pip install git+https://github.com/suno-ai/bark
 
 # Install Llama2 Library
 pip install llama-cpp-python==0.1.78
+
+# Install SpeechRecognition Library
+pip install SpeechRecognition
+
+# Install Pennylane Library
+pip install pennylane
+
 ```
 
 #### Set Up Weaviate Vector Database
