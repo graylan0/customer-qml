@@ -5,6 +5,10 @@ With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Color
 ## Backstory 
 I had a really bad experiance with verizon customer support invoking this project searching for a better potential customer support service with Quantum Machine Learning.
 
+
+## How it works
+
+The model grabs information from a vector database depending upon a customers specific requests. For example if the customer asks about what colors a specific phone has in stock. The model will reply. The 2nd feature is using color coded quantum computing to determine customer emotional states.
 ## Quantum Machine Learning. DEMO:
 
 
