@@ -2,10 +2,10 @@ qml-customer-service
 
 With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Colorized Amplitude Quantum Language Model  + Google Speech API Enabled Voice to Text Using Speech Reconigition 
 
-Created by a single open source/freedom software enginee invoking #codenameorca software repository cooperation to build better corporations and better customers as well. 
+## Backstory 
+I had a really bad experiance with verizon customer support invoking this project searching for a better potential customer support service with Quantum Machine Learning.
 
-
-Quantum Machine Learning. DEMO:
+## Quantum Machine Learning. DEMO:
 
 
 ![image](https://github.com/graylan0/customer-qml/assets/34530588/e29a02f0-8eb3-4897-a99e-d8bef91ab8da)
