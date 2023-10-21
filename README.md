@@ -58,7 +58,7 @@ pip install SciPy
 
 ```bash
 # Pull and run Weaviate Docker image
-use the docker-compose.yml located in the repo. (better docs coming) 
+docker compose up -d 
 ```
 
 #### Clone Project Repository
