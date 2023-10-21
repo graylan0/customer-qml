@@ -23,7 +23,7 @@ The model grabs information from a vector database depending upon a customers sp
 2. **Docker Desktop**: Download and install from the [official website](https://www.docker.com/products/docker-desktop).
 
 ### Step-by-Step Instructions
-
+#### Install weviate with the docker compose located in the repo https://weaviate.io/developers/weaviate/installation/docker-compose
 #### Install Required Python Packages
 
 ```bash
