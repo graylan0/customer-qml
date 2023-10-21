@@ -15,6 +15,10 @@ The model grabs information from a vector database depending upon a customers sp
 ![image](https://github.com/graylan0/customer-qml/assets/34530588/e29a02f0-8eb3-4897-a99e-d8bef91ab8da)
 
 
+DEMO of backend, colorcoded quantum reply from llama2 
+
+![image](https://github.com/graylan0/customer-qml/assets/34530588/82652f72-457b-4a57-ada8-d3c0c117426d)
+
 ## Installation Guide
 
 ### Prerequisites
