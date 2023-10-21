@@ -8,7 +8,7 @@ I had a really bad experiance with verizon customer support invoking this projec
 
 ## How it works
 
-The model grabs information from a vector database depending upon a customers specific requests. For example if the customer asks about what colors a specific phone has in stock. The model will reply. The 2nd feature is using color coded quantum computing to determine customer emotional states.
+The model grabs information from a vector database depending upon a customers specific requests. For example if the customer asks about what colors a specific phone has in stock. The model will reply. The 2nd feature is using color codes and amplitude encoding within quantum computing simulator pennylane to determine customer emotional states.
 ## Quantum Machine Learning. DEMO:
 
 
