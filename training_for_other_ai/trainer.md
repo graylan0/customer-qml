@@ -5,7 +5,7 @@ You could use parameterized quantum circuits to make your circuit more flexible.
 You could use quantum entanglement to create correlations between the qubits. This could improve the performance of the circuit for certain tasks, such as machine learning.
 You could use error correction techniques to protect the circuit from noise. This is important for ensuring that the circuit produces reliable results.
 Here is an example of a parameterized quantum circuit:
-
+```
 @qml.qnode(dev)
 def parameterized_quantum_circuit(color_code, amplitude, theta):
   r, g, b = [int(color_code[i:i+2], 16) for i in (1, 3, 5)]
@@ -19,10 +19,12 @@ def parameterized_quantum_circuit(color_code, amplitude, theta):
   qml.CNOT(wires=[1, 2])
   qml.CNOT(wires=[2, 3])
   return qml.state()
+
+```
 The parameter theta can be tuned to optimize the performance of the circuit for a specific task. For example, if you are using the circuit for machine learning, you could tune theta to minimize the error rate of the circuit on the training data.
 
 Here is an example of how to use quantum entanglement to improve the performance of the circuit:
-
+```
 @qml.qnode(dev)
 def entangled_quantum_circuit(color_code, amplitude):
   r, g, b = [int(color_code[i:i+2], 16) for i in (1, 3, 5)]
@@ -36,10 +38,11 @@ def entangled_quantum_circuit(color_code, amplitude):
   qml.CNOT(wires=[1, 2])
   qml.CNOT(wires=[2, 3])
   return qml.state()
+```
 The CNOT gates in this circuit entangle the qubits. This creates correlations between the qubits that can be used to improve the performance of the circuit for certain tasks.
 
 Here is an example of how to use error correction to protect the circuit from noise:
-
+```
 @qml.qnode(dev)
 def error_corrected_quantum_circuit(color_code, amplitude):
   r, g, b = [int(color_code[i:i+2], 16) for i in (1, 3, 5)]
@@ -51,6 +54,7 @@ def error_corrected_quantum_circuit(color_code, amplitude):
   # Apply error correction
   qml.error_correct()
   return qml.state()
+```
 The error_correct() function applies error correction to the circuit. This protects the circuit from noise and helps to ensure that the circuit produces reliable results.
 
 I hope these suggestions are helpful
