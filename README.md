@@ -5,17 +5,10 @@ With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Color
 Created by a single open source/freedom software enginee invoking #codenameorca software repository cooperation to build better corporations and better customers as well. 
 
 
-QUANTUM DEMO:
-
-![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/5b16000e-9a4c-4d6b-9123-ec6b50ed34c1)
-
-![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/d95d4383-1444-4446-aeea-f6407b143d9f)
-
-![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/29b4f487-d0b5-4ba5-a7b0-728485465f62)
+Quantum Machine Learning. DEMO:
 
 
-![image](https://github.com/graylan0/verizon-qml-customer-service/assets/34530588/ec335796-24fd-4ac2-9799-b4443d0d37c8)
-
+![image](https://github.com/graylan0/customer-qml/assets/34530588/e29a02f0-8eb3-4897-a99e-d8bef91ab8da)
 
 
 ## Installation Guide
