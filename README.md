@@ -1,5 +1,5 @@
-# Customer QML
-
+# Customer QML Colobit Emotional Research, use with caution
+ 
 With Llama2 7B Chat, Weaviate VectorDB , Bark AI Transformers TTS + Custom Colorized Amplitude Quantum Language Model  + Google Speech API Enabled Voice to Text Using Speech Reconigition 
 
 ## Backstory 
